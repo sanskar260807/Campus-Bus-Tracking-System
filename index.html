@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bus Tracking System</title>
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+
+<body>
+
+    <h2>🚌 University Bus Tracking</h2>
+
+    <div id="map"></div>
+    <div id="controls">
+        <h3>Update Crowd Status</h3>
+        <button onclick="setCrowd('Low', event)">Low</button>
+        <button onclick="setCrowd('Medium', event)">Medium</button>
+        <button onclick="setCrowd('High', event)">High</button>
+
+        <p id="crowdDisplay">Current Crowd: Not Set</p>
+    </div>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
