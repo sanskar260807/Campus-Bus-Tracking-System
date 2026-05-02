@@ -1,1 +1,125 @@
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Bus Tracker — NSU</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="bus-logo">🚌</div>
+            <div>
+                <div class="brand-name">Campus Bus Tracker</div>
+                <div class="brand-sub">Netaji Subhas University, Jamshedpur</div>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <span class="status-live"><span class="live-dot"></span>LIVE</span>
+            <span class="role-badge" id="roleBadge">User</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <!-- Bus Selector -->
+            <div class="sidebar-section">
+                <div class="sidebar-label">Select Bus</div>
+                <div class="select-wrap">
+                    <select id="busSelect">
+                        <option value="">— Choose a Bus —</option>
+                    </select>
+                    <span class="select-arrow">▼</span>
+                </div>
+            </div>
+
+            <!-- Active Bus List (visual cards, updated dynamically) -->
+            <div class="sidebar-section" id="busListSection">
+                <div class="sidebar-label">Active Buses</div>
+                <div class="bus-list" id="busList">
+                    <div class="bus-placeholder">Loading buses...</div>
+                </div>
+            </div>
+
+            <!-- Crowd Control -->
+            <div class="sidebar-section">
+                <div class="crowd-label-row">
+                    <div class="sidebar-label" style="margin-bottom:0">Crowd Level</div>
+                    <span class="crowd-current" id="crowdDisplay">Not Set</span>
+                </div>
+                <div class="crowd-buttons">
+                    <button class="crowd-btn low" onclick="setCrowd('Low', event)">Low</button>
+                    <button class="crowd-btn medium" onclick="setCrowd('Medium', event)">Medium</button>
+                    <button class="crowd-btn high" onclick="setCrowd('High', event)">High</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="sidebar-section">
+                <div class="sidebar-label">Stats</div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statBuses">—</div>
+                        <div class="stat-label">Active Buses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statStops">—</div>
+                        <div class="stat-label">Total Stops</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statETA">—</div>
+                        <div class="stat-label">ETA (min)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statCrowd">—</div>
+                        <div class="stat-label">Crowd</div>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- MAP PANEL -->
+        <main class="map-panel">
+            <div class="map-topbar">
+                <div class="map-title" id="mapTitle">Select a bus to begin tracking</div>
+                <div class="map-controls">
+                    <button class="map-ctrl-btn active" id="btnSingle" onclick="switchMode('single')">Single
+                        Bus</button>
+                    <button class="map-ctrl-btn" id="btnAll" onclick="switchMode('all')">All Buses</button>
+                </div>
+            </div>
+            <div id="map"></div>
+        </main>
+
+    </div>
+
+    <!-- BOTTOM STATUS BAR -->
+    <footer class="bottom-bar">
+        <span class="bottom-chip"><span class="chip-dot green"></span>Server Connected</span>
+        <span class="bottom-chip"><span class="chip-dot blue"></span>MongoDB Active</span>
+        <span class="bottom-chip" id="routeChip"><span class="chip-dot amber"></span>Routes Loading...</span>
+        <span class="bottom-chip last-sync">Last sync: <span id="lastSync">—</span></span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
