@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — Campus Bus Tracker</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #0a0f1e;
+            color: #e8eaf6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Subtle background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(30, 42, 70, 0.4) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 42, 70, 0.4) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+
+        /* Glow orb */
+        body::after {
+            content: '';
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(29, 78, 216, 0.12) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            pointer-events: none;
+        }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        /* Brand header above card */
+        .login-brand {
+            text-align: center;
+        }
+
+        .login-icon {
+            width: 52px;
+            height: 52px;
+            background: #1d4ed8;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 14px;
+            box-shadow: 0 0 28px rgba(29, 78, 216, 0.4);
+        }
+
+        .login-brand h1 {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px;
+        }
+
+        .login-brand p {
+            font-size: 12px;
+            color: #3d5278;
+            font-family: 'DM Mono', monospace;
+            margin-top: 4px;
+        }
+
+        /* Card */
+        .login-card {
+            background: #0d1528;
+            border: 1px solid #1e2a45;
+            border-radius: 16px;
+            padding: 32px 28px;
+            width: 340px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-card h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #c5d8f2;
+            margin-bottom: 6px;
+        }
+
+        .login-card .sub {
+            font-size: 12px;
+            color: #3d5278;
+            font-family: 'DM Mono', monospace;
+            margin-bottom: 24px;
+        }
+
+        /* Form fields */
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            color: #4b6088;
+            font-family: 'DM Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .field input {
+            width: 100%;
+            background: #111c33;
+            border: 1px solid #1e2f4d;
+            border-radius: 8px;
+            color: #c5d8f2;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .field input::placeholder {
+            color: #2a3f65;
+        }
+
+        .field input:focus {
+            border-color: #3b82f6;
+        }
+
+        /* Submit button */
+        .submit-btn {
+            width: 100%;
+            background: #1d4ed8;
+            border: none;
+            border-radius: 8px;
+            color: #bfdbfe;
+            padding: 11px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.15s;
+            letter-spacing: 0.2px;
+        }
+
+        .submit-btn:hover {
+            background: #2563eb;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.99);
+        }
+
+        /* Error message */
+        #msg {
+            margin-top: 14px;
+            font-size: 12px;
+            font-family: 'DM Mono', monospace;
+            color: #f87171;
+            text-align: center;
+            min-height: 18px;
+        }
+
+        /* Divider */
+        .divider {
+            border-top: 1px solid #151f35;
+            margin: 20px 0;
+        }
+
+        /* Demo credentials hint */
+        .demo-hint {
+            font-size: 11px;
+            color: #2a3a5c;
+            font-family: 'DM Mono', monospace;
+            text-align: center;
+        }
+
+        .demo-hint span {
+            color: #3d5278;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-wrapper">
+        <div class="login-brand">
+            <div class="login-icon">🚌</div>
+            <h1>Campus Bus Tracker</h1>
+            <p>Netaji Subhas University, Jamshedpur</p>
+        </div>
+
+        <div class="login-card">
+            <h2>Welcome back</h2>
+            <p class="sub">Sign in to access the dashboard</p>
+
+            <div class="field">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Enter your username" />
+            </div>
+
+            <div class="field">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••"
+                    onkeydown="if(event.key==='Enter') login()" />
+            </div>
+
+            <button class="submit-btn" onclick="login()">Sign In →</button>
+
+            <p id="msg"></p>
+
+            <div class="divider"></div>
+            <p class="demo-hint">Role access: <span>admin</span> / <span>superadmin</span></p>
+        </div>
+    </div>
+
+    <script>
+        async function login() {
+            let username = document.getElementById("username").value.trim();
+            let password = document.getElementById("password").value;
+            let msgEl = document.getElementById("msg");
+
+            if (!username || !password) {
+                msgEl.textContent = "Please enter username and password.";
+                return;
+            }
+
+            try {
+                msgEl.textContent = "Signing in...";
+                msgEl.style.color = "#60a5fa";
+
+                let res = await fetch("http://localhost:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                let data = await res.json();
+
+                if (res.status === 200) {
+                    localStorage.setItem("role", data.role);
+                    msgEl.textContent = "✓ Login successful";
+                    msgEl.style.color = "#4ade80";
+                    setTimeout(() => window.location.href = "index.html", 500);
+                } else {
+                    msgEl.textContent = "❌ " + (data.message || "Invalid credentials");
+                    msgEl.style.color = "#f87171";
+                }
+
+            } catch (err) {
+                msgEl.textContent = "⚠ Cannot connect to server";
+                msgEl.style.color = "#fbbf24";
+                console.error(err);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
