@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel — Campus Bus Tracker</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
+    <style>
+        /* ── RESET ── */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            background: #0a0f1e;
+            color: #e8eaf6;
+            font-size: 14px;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #0d1528;
+            border-bottom: 1px solid #1e2a45;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 100;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bus-logo {
+            width: 34px;
+            height: 34px;
+            background: #1d4ed8;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .brand-name {
+            font-size: 15px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-sub {
+            font-size: 11px;
+            color: #3d5278;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-badge {
+            background: #1e2a45;
+            border: 1px solid #2a3a5c;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: #f59e0b;
+            font-family: 'DM Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid #1e2f4d;
+            border-radius: 6px;
+            padding: 5px 14px;
+            font-size: 12px;
+            color: #60a5fa;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.15s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-btn:hover {
+            background: #111c33;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #2a3a5c;
+            border-radius: 6px;
+            padding: 5px 12px;
+            font-size: 12px;
+            color: #4b6088;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .logout-btn:hover {
+            border-color: #f87171;
+            color: #f87171;
+        }
+
+        /* ── LAYOUT ── */
+        .page {
+            margin-top: 56px;
+            display: flex;
+            min-height: calc(100vh - 56px);
+        }
+
+        /* ── SIDEBAR NAV ── */
+        .sidenav {
+            width: 220px;
+            background: #0d1528;
+            border-right: 1px solid #1e2a45;
+            padding: 20px 0;
+            flex-shrink: 0;
+            position: sticky;
+            top: 56px;
+            height: calc(100vh - 56px);
+        }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: #2a3a5c;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            padding: 0 16px;
+            margin-bottom: 6px;
+            margin-top: 16px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .nav-section-label:first-child {
+            margin-top: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 16px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #4b6088;
+            transition: all 0.15s;
+            border-left: 2px solid transparent;
+        }
+
+        .nav-item:hover {
+            color: #c5d8f2;
+            background: #111c33;
+        }
+
+        .nav-item.active {
+            color: #60a5fa;
+            background: #0f1f3d;
+            border-left-color: #3b82f6;
+        }
+
+        .nav-item-icon {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ── MAIN CONTENT ── */
+        .main {
+            flex: 1;
+            padding: 28px;
+            overflow-y: auto;
+        }
+
+        /* ── PAGE SECTIONS ── */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #c5d8f2;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: #3d5278;
+            margin-bottom: 24px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        /* ── STAT CARDS ROW ── */
+        .stat-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: #0d1528;
+            border: 1px solid #1e2a45;
+            border-radius: 10px;
+            padding: 16px 18px;
+        }
+
+        .stat-card-icon {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card-value {
+            font-size: 26px;
+            font-weight: 600;
+            color: #60a5fa;
+            font-family: 'DM Mono', monospace;
+            line-height: 1;
+        }
+
+        .stat-card-label {
+            font-size: 11px;
+            color: #3d5278;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: #0d1528;
+            border: 1px solid #1e2a45;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid #151f35;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #c5d8f2;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* ── FORM ── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #4b6088;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .form-input,
+        .form-select {
+            background: #111c33;
+            border: 1px solid #1e2f4d;
+            border-radius: 8px;
+            color: #c5d8f2;
+            padding: 9px 12px;
+            font-size: 13px;
+            font-family: 'Space Grotesk', sans-serif;
+            outline: none;
+            transition: border-color 0.15s;
+            width: 100%;
+        }
+
+        .form-input::placeholder {
+            color: #2a3f65;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: #3b82f6;
+        }
+
+        .form-select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        /* ── STOPS BUILDER ── */
+        .stops-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .stop-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 8px;
+            align-items: center;
+            background: #111c33;
+            border: 1px solid #1e2f4d;
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .stop-row input {
+            background: #0a0f1e;
+            border: 1px solid #1a2540;
+            border-radius: 6px;
+            color: #c5d8f2;
+            padding: 7px 10px;
+            font-size: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            outline: none;
+            width: 100%;
+        }
+
+        .stop-row input:focus {
+            border-color: #3b82f6;
+        }
+
+        .stop-row input::placeholder {
+            color: #2a3f65;
+        }
+
+        .remove-stop-btn {
+            background: #1c0505;
+            border: 1px solid #7f1d1d;
+            border-radius: 6px;
+            color: #f87171;
+            padding: 7px 10px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .remove-stop-btn:hover {
+            background: #7f1d1d;
+        }
+
+        .add-stop-btn {
+            background: #052e16;
+            border: 1px dashed #166534;
+            border-radius: 8px;
+            color: #4ade80;
+            padding: 9px;
+            cursor: pointer;
+            font-size: 12px;
+            width: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.15s;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .add-stop-btn:hover {
+            background: #166534;
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #1d4ed8;
+            color: #bfdbfe;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-danger {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+
+        .btn-danger:hover {
+            background: #991b1b;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #1e2f4d;
+            color: #60a5fa;
+        }
+
+        .btn-ghost:hover {
+            background: #111c33;
+        }
+
+        /* ── TABLE ── */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            border-bottom: 1px solid #1e2a45;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #3d5278;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'DM Mono', monospace;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #0f1a2e;
+            font-size: 13px;
+            color: #a8c1e8;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #0f1a2e;
+        }
+
+        .table-bus-no {
+            background: #1e3a6e;
+            color: #60a5fa;
+            border-radius: 5px;
+            padding: 3px 8px;
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+        }
+
+        .color-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tbl-btn {
+            border: 1px solid;
+            border-radius: 5px;
+            padding: 4px 10px;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.15s;
+        }
+
+        .tbl-btn-del {
+            border-color: #7f1d1d;
+            color: #f87171;
+            background: #1c0505;
+        }
+
+        .tbl-btn-del:hover {
+            background: #7f1d1d;
+        }
+
+        /* ── CROWD TABLE ── */
+        .crowd-badge {
+            display: inline-block;
+            border-radius: 5px;
+            padding: 3px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: 'DM Mono', monospace;
+        }
+
+        .crowd-low {
+            background: #052e16;
+            color: #4ade80;
+            border: 1px solid #166534;
+        }
+
+        .crowd-medium {
+            background: #1c1700;
+            color: #fbbf24;
+            border: 1px solid #92400e;
+        }
+
+        .crowd-high {
+            background: #1c0505;
+            color: #f87171;
+            border: 1px solid #7f1d1d;
+        }
+
+        /* ── TOAST ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0d1528;
+            border: 1px solid #1e2a45;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 13px;
+            color: #c5d8f2;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: #166534;
+        }
+
+        .toast.error {
+            border-color: #7f1d1d;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #2a3a5c;
+            font-family: 'DM Mono', monospace;
+            font-size: 13px;
+        }
+
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e2a45;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <div class="bus-logo">🚌</div>
+            <div>
+                <div class="brand-name">Campus Bus Tracker</div>
+                <div class="brand-sub">Admin Panel — NSU Jamshedpur</div>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <a href="index.html" class="nav-btn">🗺 Live Map</a>
+            <span class="role-badge" id="roleBadge">Admin</span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="page">
+
+        <!-- SIDE NAV -->
+        <nav class="sidenav">
+            <div class="nav-section-label">Overview</div>
+            <div class="nav-item active" onclick="showSection('dashboard', this)">
+                <span class="nav-item-icon">📊</span> Dashboard
+            </div>
+
+            <div class="nav-section-label">Manage</div>
+            <div class="nav-item" onclick="showSection('addBus', this)">
+                <span class="nav-item-icon">➕</span> Add New Bus
+            </div>
+            <div class="nav-item" onclick="showSection('allBuses', this)">
+                <span class="nav-item-icon">🚌</span> All Buses
+            </div>
+            <div class="nav-section-label">Monitor</div>
+            <div class="nav-item" onclick="showSection('crowdLog', this)">
+                <span class="nav-item-icon">👥</span> Crowd Log
+            </div>
+        </nav>
+
+        <!-- MAIN -->
+        <main class="main">
+
+            <!-- ══ DASHBOARD ══ -->
+            <div class="section active" id="section-dashboard">
+                <div class="page-title">Dashboard</div>
+                <div class="page-subtitle">Overview of the Campus Bus System</div>
+
+                <div class="stat-row">
+                    <div class="stat-card">
+                        <div class="stat-card-icon">🚌</div>
+                        <div class="stat-card-value" id="dashBuses">—</div>
+                        <div class="stat-card-label">Total Buses</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">📍</div>
+                        <div class="stat-card-value" id="dashStops">—</div>
+                        <div class="stat-card-label">Total Stops</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">📋</div>
+                        <div class="stat-card-value" id="dashRoutes">—</div>
+                        <div class="stat-card-label">Routes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">👥</div>
+                        <div class="stat-card-value" id="dashCrowd">—</div>
+                        <div class="stat-card-label">Last Crowd</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🚌 Bus Routes Summary</span>
+                        <button class="btn btn-ghost" style="font-size:12px; padding:5px 12px"
+                            onclick="showSection('addBus', document.querySelector('.nav-item:nth-child(5)'))">+ Add
+                            Bus</button>
+                    </div>
+                    <div class="card-body" style="padding:0">
+                        <div class="table-wrap">
+                            <table id="dashBusTable">
+                                <thead>
+                                    <tr>
+                                        <th>Bus No</th>
+                                        <th>Route Name</th>
+                                        <th>Color</th>
+                                        <th>Stops</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashBusBody">
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon">🔄</div>Loading...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ ADD BUS ══ -->
+            <div class="section" id="section-addBus">
+                <div class="page-title">Add New Bus</div>
+                <div class="page-subtitle">Fill in details to add a bus route to the system</div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🚌 Bus Details</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Bus Number</label>
+                                <input class="form-input" id="inputBusNo" placeholder="e.g. BUS-01" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Route Name</label>
+                                <input class="form-input" id="inputRouteName" placeholder="e.g. Main Gate Route" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Route Color</label>
+                                <input class="form-input" id="inputColor" type="color" value="#3b82f6"
+                                    style="height:40px; cursor:pointer; padding:4px 8px;" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Preview Color</label>
+                                <div id="colorPreview"
+                                    style="background:#3b82f6; border-radius:8px; height:40px; transition:background 0.2s; border:1px solid #1e2f4d;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📍 Route Stops</span>
+                        <span style="font-size:11px; color:#3d5278; font-family:'DM Mono',monospace">Add stops in
+                            order</span>
+                    </div>
+                    <div class="card-body">
+                        <div
+                            style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:8px; padding:0 0 6px; border-bottom:1px solid #151f35; margin-bottom:10px;">
+                            <span
+                                style="font-size:11px;color:#3d5278;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;">Stop
+                                Name</span>
+                            <span
+                                style="font-size:11px;color:#3d5278;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;">Latitude</span>
+                            <span
+                                style="font-size:11px;color:#3d5278;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;">Longitude</span>
+                            <span></span>
+                        </div>
+                        <div class="stops-container" id="stopsContainer"></div>
+                        <button class="add-stop-btn" onclick="addStopRow()">+ Add Stop</button>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end;">
+                    <button class="btn btn-ghost" onclick="clearForm()">Clear</button>
+                    <button class="btn btn-primary" onclick="submitBus()">🚌 Add Bus to System</button>
+                </div>
+            </div>
+
+            <!-- ══ ALL BUSES ══ -->
+            <div class="section" id="section-allBuses">
+                <div class="page-title">All Buses</div>
+                <div class="page-subtitle">Manage all bus routes in the system</div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🚌 Bus Routes</span>
+                        <button class="btn btn-primary" style="font-size:12px;padding:6px 14px"
+                            onclick="loadAllBuses()">🔄 Refresh</button>
+                    </div>
+                    <div class="card-body" style="padding:0">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Bus No</th>
+                                        <th>Route Name</th>
+                                        <th>Color</th>
+                                        <th>Stops</th>
+                                        <th>First Stop</th>
+                                        <th>Last Stop</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allBusBody">
+                                    <tr>
+                                        <td colspan="7">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon">🔄</div>Loading buses...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ CROWD LOG ══ -->
+            <div class="section" id="section-crowdLog">
+                <div class="page-title">Crowd Log</div>
+                <div class="page-subtitle">History of crowd level updates</div>
+
+                <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+                    <div class="stat-card">
+                        <div class="stat-card-icon">🟢</div>
+                        <div class="stat-card-value" id="countLow">—</div>
+                        <div class="stat-card-label">Low Reports</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">🟡</div>
+                        <div class="stat-card-value" id="countMed">—</div>
+                        <div class="stat-card-label">Medium Reports</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-icon">🔴</div>
+                        <div class="stat-card-value" id="countHigh">—</div>
+                        <div class="stat-card-label">High Reports</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📋 Recent Crowd Updates</span>
+                        <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px"
+                            onclick="loadCrowdLog()">🔄 Refresh</button>
+                    </div>
+                    <div class="card-body" style="padding:0">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Crowd Level</th>
+                                        <th>Record ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="crowdLogBody">
+                                    <tr>
+                                        <td colspan="3">
+                                            <div class="empty-state">
+                                                <div class="empty-state-icon">🔄</div>Loading...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ── AUTH CHECK ──
+        const role = localStorage.getItem("role");
+        if (!role) window.location.href = "login.html";
+        document.getElementById("roleBadge").textContent = role ? role.charAt(0).toUpperCase() + role.slice(1) : "Admin";
+
+        const BASE = "http://localhost:5000";
+
+        // ── NAVIGATION ──
+        function showSection(id, el) {
+            document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+            document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+            document.getElementById("section-" + id).classList.add("active");
+            if (el) el.classList.add("active");
+
+            if (id === "dashboard") loadDashboard();
+            if (id === "allBuses") loadAllBuses();
+            if (id === "crowdLog") loadCrowdLog();
+        }
+
+        // ── TOAST ──
+        function showToast(msg, type = "success") {
+            const t = document.getElementById("toast");
+            t.textContent = (type === "success" ? "✅ " : "❌ ") + msg;
+            t.className = "toast show " + type;
+            setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        // ── DASHBOARD ──
+        async function loadDashboard() {
+            try {
+                let res = await fetch(BASE + "/get-bus");
+                let buses = await res.json();
+                let totalStops = buses.reduce((s, b) => s + b.stops.length, 0);
+
+                document.getElementById("dashBuses").textContent = buses.length;
+                document.getElementById("dashStops").textContent = totalStops;
+                document.getElementById("dashRoutes").textContent = buses.length;
+
+                let crowdRes = await fetch(BASE + "/get-crowd");
+                let crowd = await crowdRes.json();
+                document.getElementById("dashCrowd").textContent = crowd.level || "—";
+
+                let tbody = document.getElementById("dashBusBody");
+                if (buses.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="empty-state-icon">🚌</div>No buses added yet</div></td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = buses.map(b => `
+          <tr>
+            <td><span class="table-bus-no">${b.busNo}</span></td>
+            <td>${b.routeName}</td>
+            <td><span class="color-dot" style="background:${b.color || '#3b82f6'}"></span>${b.color || '#3b82f6'}</td>
+            <td><span style="font-family:'DM Mono',monospace">${b.stops.length}</span></td>
+          </tr>`).join("");
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // ── ALL BUSES ──
+        async function loadAllBuses() {
+            let tbody = document.getElementById("allBusBody");
+            tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">🔄</div>Loading...</div></td></tr>`;
+            try {
+                let res = await fetch(BASE + "/get-bus");
+                let buses = await res.json();
+
+                if (buses.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">🚌</div>No buses found. Add one!</div></td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = buses.map(b => `
+          <tr>
+            <td><span class="table-bus-no">${b.busNo}</span></td>
+            <td>${b.routeName}</td>
+            <td><span class="color-dot" style="background:${b.color || '#3b82f6'}"></span>${b.color || '#3b82f6'}</td>
+            <td><span style="font-family:'DM Mono',monospace">${b.stops.length}</span></td>
+            <td>${b.stops[0]?.name || '—'}</td>
+            <td>${b.stops[b.stops.length - 1]?.name || '—'}</td>
+            <td>
+              <div class="action-btns">
+                <button class="tbl-btn tbl-btn-del" onclick="deleteBus('${b._id}', '${b.busNo}')">🗑 Delete</button>
+              </div>
+            </td>
+          </tr>`).join("");
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-state-icon">⚠️</div>Could not load buses</div></td></tr>`;
+            }
+        }
+
+        // ── DELETE BUS ──
+        async function deleteBus(id, busNo) {
+            if (!confirm(`Delete ${busNo}? This cannot be undone.`)) return;
+            try {
+                let res = await fetch(BASE + "/delete-bus/" + id, { method: "DELETE" });
+                let data = await res.json();
+                showToast(busNo + " deleted successfully");
+                loadAllBuses();
+            } catch (e) {
+                showToast("Failed to delete bus", "error");
+            }
+        }
+
+        // ── STOPS BUILDER ──
+        let stopCount = 0;
+        function addStopRow(name = "", lat = "", lng = "") {
+            stopCount++;
+            const id = "stop_" + stopCount;
+            const div = document.createElement("div");
+            div.className = "stop-row";
+            div.id = id;
+            div.innerHTML = `
+        <input type="text"   placeholder="Stop name"  class="stop-name" value="${name}" />
+        <input type="number" placeholder="e.g. 22.804" class="stop-lat" value="${lat}" step="any"/>
+        <input type="number" placeholder="e.g. 86.202" class="stop-lng" value="${lng}" step="any"/>
+        <button class="remove-stop-btn" onclick="removeStop('${id}')">✕</button>
+      `;
+            document.getElementById("stopsContainer").appendChild(div);
+        }
+
+        function removeStop(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        // Add 2 default rows
+        addStopRow();
+        addStopRow();
+
+        // Color preview
+        document.addEventListener("DOMContentLoaded", () => {
+            const colorInput = document.getElementById("inputColor");
+            if (colorInput) {
+                colorInput.addEventListener("input", function () {
+                    document.getElementById("colorPreview").style.background = this.value;
+                });
+            }
+        });
+        setTimeout(() => {
+            const colorInput = document.getElementById("inputColor");
+            if (colorInput) {
+                colorInput.addEventListener("input", function () {
+                    document.getElementById("colorPreview").style.background = this.value;
+                });
+            }
+        }, 100);
+
+        // ── SUBMIT BUS ──
+        async function submitBus() {
+            const busNo = document.getElementById("inputBusNo").value.trim();
+            const routeName = document.getElementById("inputRouteName").value.trim();
+            const color = document.getElementById("inputColor").value;
+
+            if (!busNo || !routeName) {
+                showToast("Please fill Bus Number and Route Name", "error"); return;
+            }
+
+            const rows = document.querySelectorAll(".stop-row");
+            const stops = [];
+            let valid = true;
+
+            rows.forEach(row => {
+                const name = row.querySelector(".stop-name").value.trim();
+                const lat = parseFloat(row.querySelector(".stop-lat").value);
+                const lng = parseFloat(row.querySelector(".stop-lng").value);
+                if (!name || isNaN(lat) || isNaN(lng)) { valid = false; return; }
+                stops.push({ name, lat, lng });
+            });
+
+            if (!valid || stops.length < 2) {
+                showToast("Add at least 2 complete stops (name, lat, lng)", "error"); return;
+            }
+
+            try {
+                let res = await fetch(BASE + "/add-bus", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ busNo, routeName, color, stops })
+                });
+                let data = await res.json();
+                showToast(busNo + " added successfully! 🚌");
+                clearForm();
+            } catch (e) {
+                showToast("Failed to add bus. Is server running?", "error");
+            }
+        }
+
+        // ── CLEAR FORM ──
+        function clearForm() {
+            document.getElementById("inputBusNo").value = "";
+            document.getElementById("inputRouteName").value = "";
+            document.getElementById("inputColor").value = "#3b82f6";
+            document.getElementById("colorPreview").style.background = "#3b82f6";
+            document.getElementById("stopsContainer").innerHTML = "";
+            stopCount = 0;
+            addStopRow();
+            addStopRow();
+        }
+
+        // ── CROWD LOG ──
+        async function loadCrowdLog() {
+            let tbody = document.getElementById("crowdLogBody");
+            tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="empty-state-icon">🔄</div>Loading...</div></td></tr>`;
+            try {
+                let res = await fetch(BASE + "/get-crowd-all");
+                let data = await res.json();
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="empty-state-icon">📋</div>No crowd data yet</div></td></tr>`;
+                    document.getElementById("countLow").textContent = 0;
+                    document.getElementById("countMed").textContent = 0;
+                    document.getElementById("countHigh").textContent = 0;
+                    return;
+                }
+
+                const low = data.filter(d => d.level === "Low").length;
+                const med = data.filter(d => d.level === "Medium").length;
+                const high = data.filter(d => d.level === "High").length;
+
+                document.getElementById("countLow").textContent = low;
+                document.getElementById("countMed").textContent = med;
+                document.getElementById("countHigh").textContent = high;
+
+                tbody.innerHTML = data.slice().reverse().map((d, i) => {
+                    let cls = d.level === "Low" ? "crowd-low" : d.level === "High" ? "crowd-high" : "crowd-medium";
+                    return `<tr>
+            <td style="font-family:'DM Mono',monospace;color:#3d5278">${i + 1}</td>
+            <td><span class="crowd-badge ${cls}">${d.level}</span></td>
+            <td style="font-family:'DM Mono',monospace;font-size:11px;color:#3d5278">${d._id}</td>
+          </tr>`;
+                }).join("");
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="empty-state-icon">⚠️</div>Could not load crowd data</div></td></tr>`;
+            }
+        }
+
+        // ── LOGOUT ──
+        function logout() {
+            localStorage.removeItem("role");
+            window.location.href = "login.html";
+        }
+
+        // ── INIT ──
+        loadDashboard();
+    </script>
+
+</body>
+
+</html>
