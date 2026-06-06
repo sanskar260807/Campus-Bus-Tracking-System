@@ -202,11 +202,6 @@ role        (String)   — "admin" | "superadmin"
 |---|---|---|
 | _(screenshot)_ | _(screenshot)_ | _(screenshot)_ |
 
-**To add screenshots:**
-1. Take a screenshot of your running project
-2. Save it inside a `screenshots/` folder in your repo
-3. Replace `_(screenshot)_` above with: `![Login](screenshots/login.png)`
-
 ---
 
 ## 👨‍💻 Team
@@ -219,7 +214,7 @@ role        (String)   — "admin" | "superadmin"
 
 **Institution:** Netaji Subhas University, Jamshedpur, Jharkhand
 **Course:** Bachelor of Computer Applications (BCA) — 6th Semester
-**Academic Year:** 2024–25
+**Academic Year:** 2023–26
 
 ---
 
